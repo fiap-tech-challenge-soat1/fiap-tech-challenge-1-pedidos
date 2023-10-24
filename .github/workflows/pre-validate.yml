@@ -23,7 +23,7 @@ jobs:
     #   run: npm run build
 
     - name: Setup Docker
-      run: docker/setup-buildx-action@v3
+      run: docker/setup-buildx-action@v1
 
     - name: Build Docker Image
       run: docker build -t pedidos-service-tech-challenge:1.0 .
