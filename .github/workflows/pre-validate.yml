@@ -3,6 +3,10 @@ on:
     branches:
       - main
 
+defaults:
+  run:
+    working-directory: ./fiap-tech-challenge-1-pedidos
+
 jobs:
   build:
     runs-on: ubuntu-latest
