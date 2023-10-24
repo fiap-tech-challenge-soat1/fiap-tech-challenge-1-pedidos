@@ -28,4 +28,4 @@ jobs:
   
       - name: Build Docker Image
         run: docker build -t pedidos-service-tech-challenge:1.0 .
-        working-directory: ./fiap-tech-challenge-1-pedidos
+        # working-directory: ./fiap-tech-challenge-1-pedidos
