@@ -14,8 +14,8 @@ jobs:
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
   
-      # - name: Build Docker Image
-      #   run: docker build -t pedidos-service-tech-challenge:1.0 .
+      - name: Build Docker Image
+        run: docker build -t pedidos-service-tech-challenge:2.0 .
         # working-directory: ./fiap-tech-challenge-1-pedidos
 
       # - name: Google Auth
@@ -24,15 +24,18 @@ jobs:
       #     workload_identity_provider: ${{secrets.WIF_PROVIDER}}
       #     service_account: ${{WIF_SERVICE_ACCOUNT}}
 
-      - name: Configure GCP SDK
+      - name: Authenticate to GCP
         uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: fiap-tech-challenge-403000
           service_account_key: ${{secrets.SERVICE_ACCOUNT_KEY}}
           export_default_credentials: true
 
-      - name: Configure gcloud docker
+      - name: Configure docker cliente container registry
         run: gcloud auth configure-docker
+
+      - name: Push docker image to gcp container registry
+        run: docker tag pedidos-service-tech-challenge:2.0 gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:2.0
 
       # - name: Docker Auth
       #   run: gcloud auth configure-docker
