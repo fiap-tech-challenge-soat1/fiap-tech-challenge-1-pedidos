@@ -39,3 +39,4 @@ jobs:
         with:
           service: pedidos-service
           image: gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
+          region: southamerica-east1
