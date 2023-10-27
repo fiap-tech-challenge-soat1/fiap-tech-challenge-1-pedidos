@@ -31,5 +31,5 @@ jobs:
         env:
           revision: ${{ github.sha::6 }}
         run: |-
-          docker tag pedidos-service-tech-challenge:$revision gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$revision
-          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$revision
+          docker tag "pedidos-service-tech-challenge:${{ revision }} gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ revision }}"
+          docker push "gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ revision }}"
