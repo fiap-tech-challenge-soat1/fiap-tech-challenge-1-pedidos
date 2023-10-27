@@ -29,7 +29,7 @@ jobs:
 
       - name: Push docker image to gcp container registry
         env:
-          rev: git_hash=$(git rev-parse --short "$GITHUB_SHA")
+          rev: ${{ github.sha::6 }}
         run: |-
-          docker tag pedidos-service-tech-challenge:2.1 gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:2.1
-          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:2.1
+          docker tag pedidos-service-tech-challenge:${{rev}} gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{rev}}
+          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{rev}}
