@@ -15,7 +15,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
   
       - name: Build Docker Image
-        run: docker build -t pedidos-service-tech-challenge:$GITHUB_SHA .
+        run: docker build -t pedidos-service-tech-challenge:3.1.1 .
 
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0.3.0
@@ -31,12 +31,12 @@ jobs:
         env:
           REVISION: 2.1
         run: |-
-          docker tag pedidos-service-tech-challenge:$GITHUB_SHA gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
-          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
+          docker tag pedidos-service-tech-challenge:3.1.1 gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:3.1.1
+          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:3.1.1
 
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: pedidos-service
-          image: gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$GITHUB_SHA
+          image: gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:3.1.1
           region: southamerica-east1
