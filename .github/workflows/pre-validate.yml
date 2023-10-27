@@ -27,7 +27,7 @@ jobs:
       - name: Configure GCP SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project-id: fiap-tech-challenge-403000
+          project_id: fiap-tech-challenge-403000
           service_account_key: ${{secrets.SERVICE_ACCOUNT_KEY}}
           export_default_credentials: true
 
