@@ -28,6 +28,8 @@ jobs:
         run: gcloud auth configure-docker
 
       - name: Push docker image to gcp container registry
+        env:
+          revision: ${{ github.sha::6 }}
         run: |-
-          docker tag pedidos-service-tech-challenge:${{ github.sha::6 }} gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ github.sha::6 }}
-          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:${{ github.sha::6 }}
+          docker tag pedidos-service-tech-challenge:$revision gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$revision
+          docker push gcr.io/fiap-tech-challenge-403000/pedidos-service-tech-challenge:$revision
