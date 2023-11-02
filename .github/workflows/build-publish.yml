@@ -44,6 +44,12 @@ jobs:
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v1
         with:
+          flags: ${{vars.DEPLOY_CONFIGS}}
+          secrets: |
+            DB_HOST=${{vars.DEPLOY_DB_HOST_SECRET_NAME}}
+            DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
+            DB_USERNAME=${{vars.DEPLOY_DB_USERNAME_SECRET_NAME}}
+            DB_PASSWORD=${{vars.DEPLOY_DB_PASSWORD_SECRET_NAME}}
           service: ${{vars.SERVICE_NAME}}
           image: gcr.io/${{vars.PROJECT_ID}}/pedidos-service-tech-challenge:${{ steps.revision.outputs.sha_short }}
           region: ${{vars.DEPLOY_REGION}}
