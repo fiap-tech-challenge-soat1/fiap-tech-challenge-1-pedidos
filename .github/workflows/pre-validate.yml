@@ -44,6 +44,7 @@ jobs:
       - name: Deploy to CloudRun
         uses: google-github-actions/deploy-cloudrun@v1
         with:
+          flags: ${{vars.DEPLOY_CONFIGS}}
           secrets: |
             DB_HOST=${{vars.DEPLOY_DB_HOST_SECRET_NAME}}
             DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
