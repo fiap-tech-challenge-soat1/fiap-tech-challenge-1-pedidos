@@ -15,12 +15,10 @@ import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
 import { PedidosConfirmadosAPI } from 'src/externals/apis/pedidos_confirmados.api';
 import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
-import { PagamentosService } from 'src/externals/services/pagamentos.service';
+import { PagamentosAPIService, PagamentosService } from 'src/externals/services/pagamentos.service';
 import { ProducaoServiceInterface } from './services/producao.service.interface';
-import { ProducaoService } from 'src/externals/services/producao.service';
-import { ConfigModule } from '@nestjs/config';
-
-// TODO: make ProducaoService and PagamentosService modules using factories and stuff...
+import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -48,15 +46,36 @@ import { ConfigModule } from '@nestjs/config';
       provide: PedidosControllerInterface,
       useClass: PedidosController,
     },
-    PagamentosService,
+
     {
         provide: PagamentosServiceInterface,
         useClass: PagamentosService,
     },
-    ProducaoService,
+    {
+        provide: PagamentosService,
+        useFactory(config: ConfigService) {
+            if (config.getOrThrow<string>('PAGAMENTOS_PROVIDER') === 'fake') {
+                return new PagamentosService();
+            }
+
+            return new PagamentosAPIService(config.getOrThrow<string>('PAGAMENTOS_API_URL'));
+        },
+        inject: [ConfigService],
+    },
     {
         provide: ProducaoServiceInterface,
         useClass: ProducaoService,
+    },
+    {
+        provide: ProducaoService,
+        useFactory(config: ConfigService) {
+            if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
+                return new ProducaoService();
+            }
+
+            return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'));
+        },
+        inject: [ConfigService],
     },
   ],
   exports: [PedidosRepository],
