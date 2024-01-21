@@ -18,6 +18,7 @@ export enum Status {
 
 export enum StatusPagamento {
   PENDENTE = 'PENDENTE',
+  PROCESSANDO = 'PROCESSANDO',
   SUCESSO = 'SUCESSO',
   FALHOU = 'FALHOU',
 }

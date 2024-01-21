@@ -13,16 +13,26 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
+import { PedidosConfirmadosAPI } from 'src/externals/apis/pedidos_confirmados.api';
+import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
+import { PagamentosService } from 'src/externals/services/pagamentos.service';
+import { ProducaoServiceInterface } from './services/producao.service.interface';
+import { ProducaoService } from 'src/externals/services/producao.service';
+import { ConfigModule } from '@nestjs/config';
+
+// TODO: make ProducaoService and PagamentosService modules using factories and stuff...
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Pedido, Item]),
     ProdutosModule,
     ClientesModule,
+    ConfigModule,
   ],
   controllers: [
     PedidosAPI,
     PedidoItensAPI,
+    PedidosConfirmadosAPI,
   ],
   providers: [
     PedidoAggregateFactory,
@@ -37,6 +47,16 @@ import { PedidosControllerInterface } from './controller/pedidos.controller.inte
     {
       provide: PedidosControllerInterface,
       useClass: PedidosController,
+    },
+    PagamentosService,
+    {
+        provide: PagamentosServiceInterface,
+        useClass: PagamentosService,
+    },
+    ProducaoService,
+    {
+        provide: ProducaoServiceInterface,
+        useClass: ProducaoService,
     },
   ],
   exports: [PedidosRepository],

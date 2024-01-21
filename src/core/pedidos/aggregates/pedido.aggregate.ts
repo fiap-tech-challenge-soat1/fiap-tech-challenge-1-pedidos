@@ -55,4 +55,37 @@ export class PedidoAggregate extends IdentifiableObject {
 
     return pedido;
   }
+
+  podeSolicitarPagamento() {
+    if (this.itens.length === 0) {
+        return false
+    }
+
+    return this.statusPagamento === StatusPagamento.FALHOU || this.statusPagamento === StatusPagamento.PENDENTE
+  }
+
+  marcarComoProcessando() {
+    this.statusPagamento = StatusPagamento.PROCESSANDO
+
+    return this.toEntity()
+  }
+
+  valorTotal() {
+    return this.itens.reduce((total, item) => {
+        return total + (item.quantidade * item.precoUnitario)
+    }, 0)
+  }
+
+  pagamentoComSucesso(dataConfirmacao: Date) {
+    this.statusPagamento = StatusPagamento.SUCESSO
+    this.dataConfirmacaoPagamento = dataConfirmacao
+  }
+
+  pagamentoFalhou() {
+    this.statusPagamento = StatusPagamento.FALHOU
+  }
+
+  iniciarPreparacao() {
+    this.status = Status.EM_PREPARACAO
+  }
 }

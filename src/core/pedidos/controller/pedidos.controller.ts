@@ -7,6 +7,10 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosControllerInterface } from './pedidos.controller.interface';
 import { PedidosServiceInterface } from '../pedido.service.interface';
 import { PedidosService } from '../pedidos.service';
+import { PagamentosService } from 'src/externals/services/pagamentos.service';
+import { PagamentosServiceInterface } from '../services/pagamentos.service.interface';
+import { ProducaoServiceInterface } from '../services/producao.service.interface';
+import { ProducaoService } from 'src/externals/services/producao.service';
 
 @Injectable()
 export class PedidosController implements PedidosControllerInterface {
@@ -15,6 +19,10 @@ export class PedidosController implements PedidosControllerInterface {
     private readonly repository: PedidosRepositoryInterface,
     @Inject(PedidosService)
     private readonly pedidosService: PedidosServiceInterface,
+    @Inject(PagamentosService)
+    private readonly pagamentosService: PagamentosServiceInterface,
+    @Inject(ProducaoService)
+    private readonly producaoService: ProducaoServiceInterface,
   ) {}
 
   findAll() {
@@ -45,6 +53,7 @@ export class PedidosController implements PedidosControllerInterface {
       itemId,
       input,
     );
+
     return this.repository.save(pedidoAtualizado);
   }
 
@@ -54,5 +63,9 @@ export class PedidosController implements PedidosControllerInterface {
 
   async removeItem(pedidoId: number, id: number) {
     await this.pedidosService.removeItem(pedidoId, id);
+  }
+
+  async confirmaPagamento(pedidoId: number) {
+    return await this.pedidosService.solicitarPagamento(pedidoId, this.pagamentosService, this.producaoService)
   }
 }

@@ -84,3 +84,13 @@ export class PagamentoFalhou extends PedidoException {
     );
   }
 }
+
+export class NaoPodeSolicitarPagamento extends PedidoException {
+    constructor(pedido: Pedido) {
+        super({
+            status: HttpStatus.BAD_REQUEST,
+            message: 'Não pode solicitar pagamento de pedido.',
+            pedido,
+        }, HttpStatus.UNPROCESSABLE_ENTITY)
+    }
+}

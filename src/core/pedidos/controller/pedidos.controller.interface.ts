@@ -10,5 +10,6 @@ export interface PedidosControllerInterface {
   updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto);
   findOneItem(id: number);
   removeItem(pedidoId: number, id: number);
+  confirmaPagamento(pedidoId: number);
 }
 export const PedidosControllerInterface = Symbol('PedidosControllerInterface');

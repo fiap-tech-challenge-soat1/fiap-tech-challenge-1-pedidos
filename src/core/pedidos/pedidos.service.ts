@@ -6,6 +6,9 @@ import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.d
 import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
+import { NaoPodeSolicitarPagamento } from './exceptions/pedido.exception';
+import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
+import { ProducaoServiceInterface, PedidoProducaoDTO } from './services/producao.service.interface';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
@@ -60,5 +63,39 @@ export class PedidosService implements PedidosServiceInterface {
     this.repository.deleteItem(id);
 
     return aggregate.toEntity();
+  }
+
+  async solicitarPagamento(
+    pedidoId: number,
+    gatewayPagamento: PagamentosServiceInterface,
+    gatewayProducao: ProducaoServiceInterface,
+  ) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+
+    if (! aggregate.podeSolicitarPagamento()) {
+        throw new NaoPodeSolicitarPagamento(aggregate.toEntity())
+    }
+
+    this.repository.save(aggregate.marcarComoProcessando())
+
+    try {
+        await gatewayPagamento.confirmaPagamento(pedidoId, aggregate.valorTotal())
+        aggregate.pagamentoComSucesso(new Date)
+        aggregate.iniciarPreparacao()
+    } catch (e) {
+        aggregate.pagamentoFalhou()
+    }
+
+    const entity = aggregate.toEntity()
+
+    this.repository.save(entity);
+
+    try {
+        gatewayProducao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity))
+    } catch (e) {
+        // ...
+    }
+
+    return entity
   }
 }
