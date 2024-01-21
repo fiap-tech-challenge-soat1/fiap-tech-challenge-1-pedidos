@@ -13,6 +13,7 @@ export interface PedidosServiceInterface {
   findOneItem(id: number);
   removeItem(pedidoId: number, id: number);
   solicitarPagamento(pedidoId: number, gatewayPagamento: PagamentosServiceInterface, gatewayProducao: ProducaoServiceInterface);
+  finalizar(pedidoId: number);
 }
 
 export const PedidosServiceInterface = Symbol('PedidosServiceInterface');

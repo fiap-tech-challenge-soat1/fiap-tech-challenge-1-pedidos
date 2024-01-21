@@ -98,4 +98,12 @@ export class PedidosService implements PedidosServiceInterface {
 
     return entity
   }
+
+  async finalizar(pedidoId: number) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
+
+    aggregate.finalizarPedido();
+
+    return await this.repository.save(aggregate.toEntity());
+  }
 }

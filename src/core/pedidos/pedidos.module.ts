@@ -19,6 +19,7 @@ import { PagamentosAPIService, PagamentosService } from 'src/externals/services/
 import { ProducaoServiceInterface } from './services/producao.service.interface';
 import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PedidosFinalizadosAPI } from 'src/externals/apis/pedidos_finalizados.api';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     PedidosAPI,
     PedidoItensAPI,
     PedidosConfirmadosAPI,
+    PedidosFinalizadosAPI,
   ],
   providers: [
     PedidoAggregateFactory,

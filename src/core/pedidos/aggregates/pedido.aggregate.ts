@@ -91,4 +91,8 @@ export class PedidoAggregate extends IdentifiableObject {
   iniciarPreparacao() {
     this.status = Status.EM_PREPARACAO
   }
+
+  finalizarPedido() {
+    this.status = Status.FINALIZADO
+  }
 }

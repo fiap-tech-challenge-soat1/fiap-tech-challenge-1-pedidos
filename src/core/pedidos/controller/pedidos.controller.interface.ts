@@ -11,5 +11,6 @@ export interface PedidosControllerInterface {
   findOneItem(id: number);
   removeItem(pedidoId: number, id: number);
   confirmaPagamento(pedidoId: number);
+  finalizar(pedidoId: number);
 }
 export const PedidosControllerInterface = Symbol('PedidosControllerInterface');
