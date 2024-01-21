@@ -68,7 +68,6 @@ export class PedidosService implements PedidosServiceInterface {
   async solicitarPagamento(
     pedidoId: number,
     gatewayPagamento: PagamentosServiceInterface,
-    gatewayProducao: ProducaoServiceInterface,
   ) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
@@ -79,10 +78,29 @@ export class PedidosService implements PedidosServiceInterface {
     this.repository.save(aggregate.marcarComoProcessando())
 
     try {
-        await gatewayPagamento.confirmaPagamento(pedidoId, aggregate.valorTotal())
+        await gatewayPagamento.solicitarPagamento(pedidoId, aggregate.valorTotal())
+    } catch (e) {
+        aggregate.pagamentoFalhou()
+    }
+
+    const entity = aggregate.toEntity()
+
+    this.repository.save(entity)
+
+    return entity
+  }
+
+  async confirmarPagamento(
+    pedidoId: number,
+    pagoComSucesso: boolean,
+    gatewayProducao: ProducaoServiceInterface,
+  ) {
+    const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
+
+    if (pagoComSucesso) {
         aggregate.pagamentoComSucesso(new Date)
         aggregate.iniciarPreparacao()
-    } catch (e) {
+    } else {
         aggregate.pagamentoFalhou()
     }
 

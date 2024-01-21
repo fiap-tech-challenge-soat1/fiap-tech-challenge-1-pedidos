@@ -1,3 +1,6 @@
+import { HttpService } from "@nestjs/axios";
+import { AxiosError } from "axios";
+import { catchError, firstValueFrom } from "rxjs";
 import { PedidoProducaoDTO, ProducaoServiceInterface } from "src/core/pedidos/services/producao.service.interface";
 
 export class ProducaoService implements ProducaoServiceInterface {
@@ -8,10 +11,17 @@ export class ProducaoService implements ProducaoServiceInterface {
 }
 
 export class ProducaoApiService implements ProducaoServiceInterface {
-    constructor(private url: string) {}
+    constructor(private url: string, private readonly http: HttpService) {}
 
-    iniciarProducao(pedidoProducaoDTO: PedidoProducaoDTO) {
-        // Fazer request para o serviço de pagamento...
-        console.log('Iniciando produção via HTTP...', { url: this.url, producao: pedidoProducaoDTO })
+    async iniciarProducao(pedido: PedidoProducaoDTO) {
+        await firstValueFrom(this.http.post(this.url, {
+            pedido,
+        }, {
+            timeout: 3_000, // 3 seconds
+        }).pipe(catchError((error: AxiosError) => {
+            console.log('Something went wrong with production endpoint', { error })
+
+            throw 'Something went wrong...';
+        })));
     }
 }

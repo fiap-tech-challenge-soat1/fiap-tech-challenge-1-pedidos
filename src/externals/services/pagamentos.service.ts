@@ -1,21 +1,28 @@
-import { PagamentosServiceInterface, ResultadoPagamento } from "src/core/pedidos/services/pagamentos.service.interface";
+import { HttpService } from "@nestjs/axios";
+import { AxiosError } from "axios";
+import { catchError, firstValueFrom } from "rxjs";
+import { PagamentosServiceInterface } from "src/core/pedidos/services/pagamentos.service.interface";
 
 export class PagamentosService implements PagamentosServiceInterface {
-    async confirmaPagamento(pedidoId: number, valorTotal: number): Promise<ResultadoPagamento> {
+    async solicitarPagamento(pedidoId: number, valorTotal: number) {
         // Fazer request para o serviço de pagamento...
         console.log('Fingindo fazer pagamento...', { pedidoId, valorTotal });
-
-        return ResultadoPagamento.sucessoFake()
     }
 }
 
 export class PagamentosAPIService implements PagamentosServiceInterface {
-    constructor(private url: string) {}
+    constructor(private url: string, private readonly http: HttpService) {}
 
-    async confirmaPagamento(pedidoId: number, valorTotal: number): Promise<ResultadoPagamento> {
-        // Fazer request para o serviço de pagamento...
-        console.log('Fazendo pagamento via HTTP...', { url: this.url, pedidoId, valorTotal });
+    async solicitarPagamento(pedidoId: number, valorTotal: number) {
+        await firstValueFrom(this.http.post(this.url, {
+            pedidoId,
+            valorTotal,
+        }, {
+            timeout: 3_000, // 3 seconds
+        }).pipe(catchError((error: AxiosError) => {
+            console.log('Payment service is down', { error })
 
-        return ResultadoPagamento.sucessoFake()
+            throw 'Payment service is down...';
+        })));
     }
 }
