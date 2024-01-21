@@ -17,12 +17,14 @@ export class PedidoAggregate extends IdentifiableObject {
 
   adicionarItem(item: ItemVO) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
 
     this.itens.push(item);
   }
 
   atualizaItem(itemId: number, quantidade: number, observacao: string) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
 
     this.itens = this.itens.map((item) => {
       if (item.id != itemId) return item;
@@ -39,6 +41,7 @@ export class PedidoAggregate extends IdentifiableObject {
 
   removeItem(itemId: number) {
     if (this.status !== Status.CRIANDO) throw new NaoPodeAlterarPedido();
+    if (this.statusPagamento === StatusPagamento.PROCESSANDO) throw new NaoPodeAlterarPedido();
 
     this.itens = this.itens.filter((item) => item.id != itemId);
   }
