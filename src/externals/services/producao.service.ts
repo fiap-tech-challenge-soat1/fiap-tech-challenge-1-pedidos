@@ -1,27 +1,45 @@
-import { HttpService } from "@nestjs/axios";
-import { AxiosError } from "axios";
-import { catchError, firstValueFrom } from "rxjs";
-import { PedidoProducaoDTO, ProducaoServiceInterface } from "src/core/pedidos/services/producao.service.interface";
+import { HttpService } from '@nestjs/axios';
+import { AxiosError } from 'axios';
+import { catchError, firstValueFrom } from 'rxjs';
+import { ProducaoServiceIndisponivelException } from 'src/core/pedidos/exceptions/servicos.exception';
+import {
+  PedidoProducaoDTO,
+  ProducaoServiceInterface,
+} from 'src/core/pedidos/services/producao.service.interface';
 
 export class ProducaoService implements ProducaoServiceInterface {
-    iniciarProducao(pedidoProducaoDTO: PedidoProducaoDTO) {
-        // Fazer request para o serviço de pagamento...
-        console.log('Fingindo iniciar produção...', { producao: pedidoProducaoDTO })
-    }
+  iniciarProducao(pedidoProducaoDTO: PedidoProducaoDTO) {
+    // Fazer request para o serviço de pagamento...
+    console.log('Fingindo iniciar produção...', {
+      producao: pedidoProducaoDTO,
+    });
+  }
 }
 
 export class ProducaoApiService implements ProducaoServiceInterface {
-    constructor(private url: string, private readonly http: HttpService) {}
+  constructor(private url: string, private readonly http: HttpService) {}
 
-    async iniciarProducao(pedido: PedidoProducaoDTO) {
-        await firstValueFrom(this.http.post(this.url, {
+  async iniciarProducao(pedido: PedidoProducaoDTO) {
+    await firstValueFrom(
+      this.http
+        .post(
+          this.url,
+          {
             pedido,
-        }, {
+          },
+          {
             timeout: 3_000, // 3 seconds
-        }).pipe(catchError((error: AxiosError) => {
-            console.log('Something went wrong with production endpoint', { error })
+          },
+        )
+        .pipe(
+          catchError((error: AxiosError) => {
+            console.error('Something went wrong with production endpoint', {
+              error,
+            });
 
-            throw 'Something went wrong...';
-        })));
-    }
+            throw new ProducaoServiceIndisponivelException();
+          }),
+        ),
+    );
+  }
 }
