@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateClienteDto } from '../../../externals/apis/dto/create-cliente.dto';
 import { UpdateClienteDto } from 'src/externals/apis/dto/update-cliente.dto';
 import { ClientesRepositoryInterface } from './../repositories/clientes.repository';
-import { ClientesRepository } from 'src/externals/repositories/clientes.repository';
 import { ClientesControllerInterface } from './clientes.controller.interface';
 import { ClientesServiceInterface } from '../clientes.service.interface';
 import { ClientesService } from '../clientes.service';
+import { ClientesRepository } from 'src/externals/repositories/clientes.repository';
 
 @Injectable()
 export class ClientesController implements ClientesControllerInterface {

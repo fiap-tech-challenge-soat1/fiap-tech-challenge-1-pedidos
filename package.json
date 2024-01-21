@@ -73,7 +73,21 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+        "interfaces",
+        ".spec.ts",
+        ".interface.ts",
+        ".module.ts",
+        ".object.ts",
+        ".dto.ts",
+        ".validator.ts",
+        "main.ts"
+    ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageReporters": ["json", "html"],
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+        "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }
