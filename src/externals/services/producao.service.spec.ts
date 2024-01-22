@@ -7,8 +7,6 @@ import { PedidoProducaoDTO } from "src/core/pedidos/services/producao.service.in
 import { Pedido } from "src/core/pedidos/entities/pedido.entity"
 
 describe('ProducaoService', () => {
-    let pedidoId = 1
-    let valor = 5
     let serviceUrl = 'http://example.com/producao-service'
     let http: HttpService
 
