@@ -16,11 +16,11 @@ export class Item {
   @ApiProperty({ example: 1, description: 'O ID do item to pedido' })
   id: number;
 
-  @ManyToOne(() => Pedido, (pedido) => pedido.itens, { nullable: false })
+  @ManyToOne(/* istanbul ignore next */ () => Pedido, /* istanbul ignore next */ (pedido) => pedido.itens, { nullable: false })
   @JoinColumn()
   pedido: Pedido;
 
-  @ManyToOne(() => Produto, { nullable: false, eager: true })
+  @ManyToOne(/* istanbul ignore next */ () => Produto, { nullable: false, eager: true })
   @JoinColumn()
   produto: Produto;
 

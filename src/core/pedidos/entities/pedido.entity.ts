@@ -29,12 +29,12 @@ export class Pedido {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cliente, { nullable: true, eager: true })
+  @ManyToOne(/* istanbul ignore next */ () => Cliente, { nullable: true, eager: true })
   @JoinColumn()
   cliente?: Cliente;
 
   @ApiProperty({ description: 'Itens do pedido', type: Item })
-  @OneToMany(() => Item, (item) => item.pedido, { eager: true, cascade: true })
+  @OneToMany(/* istanbul ignore next */ () => Item, /* istanbul ignore next */ (item) => item.pedido, { eager: true, cascade: true })
   itens: Item[];
 
   @Column({ type: 'enum', enum: Status })
