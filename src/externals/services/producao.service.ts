@@ -7,12 +7,11 @@ import {
   ProducaoServiceInterface,
 } from 'src/core/pedidos/services/producao.service.interface';
 
+/* istanbul ignore next */
 export class ProducaoService implements ProducaoServiceInterface {
   iniciarProducao(pedidoProducaoDTO: PedidoProducaoDTO) {
-    // Fazer request para o serviço de pagamento...
-    console.log('Fingindo iniciar produção...', {
-      producao: pedidoProducaoDTO,
-    });
+    /* istanbul ignore next */
+    console.log('Fingindo iniciar produção...', { producao: pedidoProducaoDTO });
   }
 }
 

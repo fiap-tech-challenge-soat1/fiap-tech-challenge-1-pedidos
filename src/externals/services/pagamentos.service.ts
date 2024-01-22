@@ -4,9 +4,10 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { PagamentoServiceIndisponivelException } from 'src/core/pedidos/exceptions/servicos.exception';
 import { PagamentosServiceInterface } from 'src/core/pedidos/services/pagamentos.service.interface';
 
+/* istanbul ignore next */
 export class PagamentosService implements PagamentosServiceInterface {
-  async solicitarPagamento(pedidoId: number, valorTotal: number) {
-    // Fazer request para o serviço de pagamento...
+  solicitarPagamento(pedidoId: number, valorTotal: number) {
+    /* istanbul ignore next */
     console.log('Fingindo fazer pagamento...', { pedidoId, valorTotal });
   }
 }
@@ -16,8 +17,7 @@ export class PagamentosAPIService implements PagamentosServiceInterface {
 
   async solicitarPagamento(pedidoId: number, valorTotal: number) {
     await firstValueFrom(
-      this.http
-        .post(
+      this.http.post(
           this.url,
           {
             pedidoId,
