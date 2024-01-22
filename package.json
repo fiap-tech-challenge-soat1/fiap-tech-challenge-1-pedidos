@@ -81,6 +81,7 @@
         ".object.ts",
         ".dto.ts",
         ".validator.ts",
+        ".exception.ts",
         "main.ts"
     ],
     "coverageDirectory": "../coverage",

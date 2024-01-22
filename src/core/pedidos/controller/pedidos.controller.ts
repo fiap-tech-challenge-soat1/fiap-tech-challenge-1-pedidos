@@ -62,7 +62,7 @@ export class PedidosController implements PedidosControllerInterface {
   }
 
   async removeItem(pedidoId: number, id: number) {
-    await this.pedidosService.removeItem(pedidoId, id);
+    return await this.pedidosService.removeItem(pedidoId, id);
   }
 
   async solicitarPagamento(pedidoId: number) {

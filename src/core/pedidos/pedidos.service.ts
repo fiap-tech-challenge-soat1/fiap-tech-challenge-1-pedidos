@@ -109,11 +109,7 @@ export class PedidosService implements PedidosServiceInterface {
     this.repository.save(entity);
 
     if (pagoComSucesso) {
-        try {
-            gatewayProducao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity))
-        } catch (e) {
-            // ...
-        }
+        gatewayProducao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity))
     }
 
     return entity
