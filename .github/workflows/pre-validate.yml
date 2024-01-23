@@ -26,7 +26,6 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
             -Dsonar.sources=src/
             -Dsonar.test.exclusions=**/*.spec.ts
-            -Dsonar.tests=src/
             -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
