@@ -47,9 +47,10 @@ jobs:
           flags: ${{vars.DEPLOY_CONFIGS}}
           env_vars: |
             PRODUCAO_PROVIDER=api
-            PRODUCAO_API_URL="${{vars.DEPLOY_PRODUCAO_API_URL}}"
+            PRODUCAO_API_URL=${{vars.DEPLOY_PRODUCAO_API_URL}}
             PAGAMENTOS_PROVIDER=api
-            PAGAMENTOS_API_URL="${{vars.DEPLOY_PAGAMENTOS_API_URL}}"
+            PAGAMENTOS_API_URL=${{vars.DEPLOY_PAGAMENTOS_API_URL}}
+            DB_USE_CLOUDSQL_SOCKET=true
           secrets: |
             DB_HOST=${{vars.DEPLOY_DB_HOST_SECRET_NAME}}
             DB_DATABASE=${{vars.DEPLOY_DB_DATABASE_SECRET_NAME}}
