@@ -4,8 +4,6 @@ import { PedidosModule } from './core/pedidos/pedidos.module';
 import { ProdutosModule } from './core/produtos/produtos.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientesModule } from './core/clientes/clientes.module';
-import { ConfirmarPagamentoChannel } from './externals/channels/confirmar.pagamento.channel';
-import { PubSubService } from './externals/channels/pubsub.service';
 
 @Module({
   imports: [
@@ -33,7 +31,7 @@ import { PubSubService } from './externals/channels/pubsub.service';
     }),
     PedidosModule,
     ProdutosModule,
-    ClientesModule
+    ClientesModule,
   ],
   controllers: [],
   providers: [],
