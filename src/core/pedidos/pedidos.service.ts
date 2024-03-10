@@ -7,18 +7,16 @@ import { PedidosRepositoryInterface } from './repositories/pedidos.repository';
 import { PedidosRepository } from 'src/externals/repositories/pedidos.repository';
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { NaoPodeSolicitarPagamento } from './exceptions/pedido.exception';
-import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
-import { ProducaoServiceInterface, PedidoProducaoDTO } from './services/producao.service.interface';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
 
 @Injectable()
 export class PedidosService implements PedidosServiceInterface {
   constructor(
+    private readonly pedidoAggregateFactory: PedidoAggregateFactory,
     @Inject(PedidosRepository)
     private readonly repository: PedidosRepositoryInterface,
-    private readonly pedidoAggregateFactory: PedidoAggregateFactory,
     @Inject(SolicitarPagamentoChannel)
-    private readonly solicitarPagamentoChannel: SolicitarPagamentoChannel
+    private readonly solicitarPagamentoChannel: SolicitarPagamentoChannel,
   ) {}
 
   findAll() {
@@ -68,10 +66,7 @@ export class PedidosService implements PedidosServiceInterface {
     return aggregate.toEntity();
   }
 
-  async solicitarPagamento(
-    pedidoId: number,
-    gatewayPagamento: PagamentosServiceInterface,
-  ) {
+  async solicitarPagamento(pedidoId: number) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
     if (! aggregate.podeSolicitarPagamento()) {
@@ -80,28 +75,14 @@ export class PedidosService implements PedidosServiceInterface {
 
     this.repository.save(aggregate.marcarComoProcessando())
 
-    try {
-        // await gatewayPagamento.solicitarPagamento(pedidoId, aggregate.valorTotal())
-        // this.pubSubService.publishMessage("solicitar-pagamento-topic", {
-        //   pedidoId: pedidoId,
-        //   valorTotal: aggregate.valorTotal()
-        // })
-        this.solicitarPagamentoChannel.solicitarPagamento(pedidoId, aggregate.valorTotal())
-    } catch (e) {
-        aggregate.pagamentoFalhou()
-    }
+    this.solicitarPagamentoChannel.solicitarPagamento(pedidoId, aggregate.valorTotal())
 
-    const entity = aggregate.toEntity()
-
-    this.repository.save(entity)
-
-    return entity
+    return aggregate.toEntity()
   }
 
   async confirmarPagamento(
     pedidoId: number,
     pagoComSucesso: boolean,
-    gatewayProducao: ProducaoServiceInterface,
   ) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
@@ -117,7 +98,7 @@ export class PedidosService implements PedidosServiceInterface {
     this.repository.save(entity);
 
     if (pagoComSucesso) {
-        gatewayProducao.iniciarProducao(PedidoProducaoDTO.fromEntity(entity))
+       // TODO: enviar msg para iniciar procução...
     }
 
     return entity

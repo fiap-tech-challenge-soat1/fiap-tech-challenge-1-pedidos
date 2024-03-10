@@ -1,7 +1,6 @@
 import { PedidosControllerInterface } from "src/core/pedidos/controller/pedidos.controller.interface"
 import { PedidoPagamentosAPI } from "./pedido_pagamentos.api"
 import { PedidosController } from "src/core/pedidos/controller/pedidos.controller"
-import { Pedido } from "src/core/pedidos/entities/pedido.entity"
 import { ConfirmaPagamentoDoPedidoDto, ResultadoPagamento } from "./dto/confirma-pagamento-do-pedido.dto"
 
 describe('PedidoPagamentosAPI', () => {
@@ -9,7 +8,7 @@ describe('PedidoPagamentosAPI', () => {
     let api: PedidoPagamentosAPI
 
     beforeEach(() => {
-        controller = new PedidosController(null, null, null, null)
+        controller = new PedidosController(null, null)
         api = new PedidoPagamentosAPI(controller)
     })
 

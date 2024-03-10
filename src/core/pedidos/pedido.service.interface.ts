@@ -12,8 +12,8 @@ export interface PedidosServiceInterface {
   updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto);
   findOneItem(id: number);
   removeItem(pedidoId: number, id: number);
-  solicitarPagamento(pedidoId: number, gatewayPagamento: PagamentosServiceInterface);
-  confirmarPagamento(pedidoId: number, pagoComSucesso: boolean, gatewayProducao: ProducaoServiceInterface);
+  solicitarPagamento(pedidoId: number);
+  confirmarPagamento(pedidoId: number, pagoComSucesso: boolean);
   finalizar(pedidoId: number);
 }
 
