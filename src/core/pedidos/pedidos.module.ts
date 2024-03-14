@@ -13,8 +13,6 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
-import { ProducaoServiceInterface } from './services/producao.service.interface';
-import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
@@ -22,6 +20,7 @@ import { PubSubService } from 'src/externals/channels/pubsub.service';
 import { ConfirmarPagamentoChannel } from 'src/externals/channels/confirmar.pagamento.channel';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
 import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.channel';
+import { PrepararPedidoChannel } from 'src/externals/channels/preparar.pedido.channel';
 
 @Module({
   imports: [
@@ -50,24 +49,10 @@ import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.
       provide: PedidosControllerInterface,
       useClass: PedidosController,
     },
-    {
-        provide: ProducaoServiceInterface,
-        useClass: ProducaoService,
-    },
-    {
-        provide: ProducaoService,
-        useFactory(config: ConfigService, http: HttpService) {
-            if (config.getOrThrow<string>('PRODUCAO_PROVIDER') === 'fake') {
-                return new ProducaoService();
-            }
-
-            return new ProducaoApiService(config.getOrThrow<string>('PRODUCAO_API_URL'), http);
-        },
-        inject: [ConfigService, HttpService],
-    },
     PubSubService,
     ConfirmarPagamentoChannel,
     SolicitarPagamentoChannel,
+    PrepararPedidoChannel,
     FinalizarPedidoChannel,
   ],
   exports: [PedidosRepository],
