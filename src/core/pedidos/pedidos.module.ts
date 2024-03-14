@@ -13,8 +13,6 @@ import { PedidosRepository } from 'src/externals/repositories/pedidos.repository
 import { PedidosServiceInterface } from './pedido.service.interface';
 import { PedidosController } from './controller/pedidos.controller';
 import { PedidosControllerInterface } from './controller/pedidos.controller.interface';
-import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
-import { PagamentosAPIService, PagamentosService } from 'src/externals/services/pagamentos.service';
 import { ProducaoServiceInterface } from './services/producao.service.interface';
 import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -51,22 +49,6 @@ import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.
     {
       provide: PedidosControllerInterface,
       useClass: PedidosController,
-    },
-
-    {
-        provide: PagamentosServiceInterface,
-        useClass: PagamentosService,
-    },
-    {
-        provide: PagamentosService,
-        useFactory(config: ConfigService, http: HttpService) {
-            if (config.getOrThrow<string>('PAGAMENTOS_PROVIDER') === 'fake') {
-                return new PagamentosService();
-            }
-
-            return new PagamentosAPIService(config.getOrThrow<string>('PAGAMENTOS_API_URL'), http);
-        },
-        inject: [ConfigService, HttpService],
     },
     {
         provide: ProducaoServiceInterface,

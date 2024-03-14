@@ -1,8 +1,6 @@
 import { CreatePedidoDto } from 'src/externals/apis/dto/create-pedido.dto';
 import { ItemVO } from './vo/item.vo';
 import { UpdatePedidoItemDto } from 'src/externals/apis/dto/update-pedido-item.dto';
-import { PagamentosServiceInterface } from './services/pagamentos.service.interface';
-import { ProducaoServiceInterface } from './services/producao.service.interface';
 
 export interface PedidosServiceInterface {
   findAll();
