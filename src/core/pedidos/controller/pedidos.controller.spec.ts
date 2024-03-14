@@ -13,7 +13,6 @@ import { Produto } from "src/core/produtos/entities/produto.entity";
 import { Item } from "../entities/item.entity";
 import { NaoPodeAlterarPedido, NaoPodeSolicitarPagamento } from "../exceptions/pedido.exception";
 import { SolicitarPagamentoChannel } from "src/externals/channels/solicitar.pagamento.channel";
-import { DataSource } from "typeorm";
 
 describe('PedidosController', () => {
     let repository: PedidosRepositoryInterface;
@@ -377,55 +376,6 @@ describe('PedidosController', () => {
         expect(requestPaymentMessage.valorTotal).toEqual(item.precoUnitario * item.quantidade)
         expect(updated.statusPagamento).toEqual(StatusPagamento.PROCESSANDO)
     })
-
-    it('rollsback when payment request fails', async () => {
-        let pedido = new Pedido()
-        let produto = new Produto()
-        let item = createItem({ id: 12, produto: produto, observacao: 'test', quantidade: 2, precoUnitario: 3})
-        pedido.itens = [item]
-        pedido.id = 11
-        pedido.status = Status.CRIANDO
-        pedido.statusPagamento = StatusPagamento.PENDENTE
-
-        let queriedId
-        jest.spyOn(repository, 'findOneOrFail').mockImplementation(async (id) => {
-            queriedId = id
-            return pedido
-        })
-
-        jest.spyOn(repository, 'save').mockImplementation(async (pedido) => pedido)
-
-        const updated = await controller.confirmaPagamento(pedido.id, false)
-
-        expect(queriedId).toEqual(pedido.id)
-        expect(updated.statusPagamento).toEqual(StatusPagamento.FALHOU)
-    });
-
-    it('confirms payment success', async () => {
-        let pedido = new Pedido()
-        let produto = new Produto()
-        produto.nome = 'x-burger'
-        let item = createItem({ id: 12, produto: produto, observacao: 'test', quantidade: 2, precoUnitario: 3})
-        pedido.itens = [item]
-        pedido.id = 11
-        pedido.status = Status.CRIANDO
-        pedido.statusPagamento = StatusPagamento.PENDENTE
-
-        let queriedId
-        jest.spyOn(repository, 'findOneOrFail').mockImplementation(async (id) => {
-            queriedId = id
-            return pedido
-        })
-
-        jest.spyOn(repository, 'save').mockImplementation(async (pedido) => pedido)
-
-        const updated = await controller.confirmaPagamento(pedido.id, true)
-
-        expect(queriedId).toEqual(pedido.id)
-        expect(updated.statusPagamento).toEqual(StatusPagamento.SUCESSO)
-        expect(updated.dataConfirmacaoPagamento).not.toBeNull()
-        expect(updated.status).toEqual(Status.EM_PREPARACAO)
-    });
 
     it('finalizes the order', async () => {
         let pedido = new Pedido()

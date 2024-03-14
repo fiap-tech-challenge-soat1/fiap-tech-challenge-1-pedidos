@@ -61,10 +61,6 @@ export class PedidosController implements PedidosControllerInterface {
     return await this.pedidosService.solicitarPagamento(pedidoId)
   }
 
-  async confirmaPagamento(pedidoId: number, pagoComSucesso: boolean) {
-    return await this.pedidosService.confirmarPagamento(pedidoId, pagoComSucesso)
-  }
-
   async finalizar(pedidoId: number) {
     return await this.pedidosService.finalizar(pedidoId)
   }

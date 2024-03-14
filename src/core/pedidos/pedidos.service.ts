@@ -40,11 +40,7 @@ export class PedidosService implements PedidosServiceInterface {
     return pedidoAggregate.toEntity();
   }
 
-  async updateItem(
-    pedidoId: number,
-    itemId: number,
-    input: UpdatePedidoItemDto,
-  ) {
+  async updateItem(pedidoId: number, itemId: number, input: UpdatePedidoItemDto) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId);
 
     aggregate.atualizaItem(itemId, input.quantidade, input.observacao);
@@ -80,10 +76,7 @@ export class PedidosService implements PedidosServiceInterface {
     return aggregate.toEntity()
   }
 
-  async confirmarPagamento(
-    pedidoId: number,
-    pagoComSucesso: boolean,
-  ) {
+  async confirmarPagamento(pedidoId: number, pagoComSucesso: boolean) {
     const aggregate = await this.pedidoAggregateFactory.createFromId(pedidoId)
 
     if (pagoComSucesso) {

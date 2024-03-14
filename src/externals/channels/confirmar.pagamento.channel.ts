@@ -1,26 +1,25 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { PubSubService } from "./pubsub.service";
-import { PedidosController } from "src/core/pedidos/controller/pedidos.controller";
-import { PedidosControllerInterface } from "src/core/pedidos/controller/pedidos.controller.interface";
 import { ConfirmaPagamentoDoPedidoDto, ResultadoPagamento } from "../apis/dto/confirma-pagamento-do-pedido.dto";
+import { PedidosServiceInterface } from "src/core/pedidos/pedido.service.interface";
+import { PedidosService } from "src/core/pedidos/pedidos.service";
 
 @Injectable()
 export class ConfirmarPagamentoChannel {
-
     constructor(
         @Inject(PubSubService)
         private readonly pubSubService: PubSubService,
-        @Inject(PedidosController)
-        private readonly pedidos: PedidosControllerInterface,
+        @Inject(PedidosService)
+        private readonly pedidos: PedidosServiceInterface,
     ) {}
 
     async registerMessageConsumer() {
         await this.pubSubService.consumeMessages(
             "confirmar-pagamento-topic",
             "confirmar-pagamento-topic.pedidos-subscription",
-            (message) => {
+            async (message) => {
               const input: ConfirmaPagamentoDoPedidoDto = JSON.parse(message)
-              this.pedidos.confirmaPagamento(
+              await this.pedidos.confirmarPagamento(
                 input.pedido,
                 input.resultadoPagamento === ResultadoPagamento.SUCESSO,
               )
