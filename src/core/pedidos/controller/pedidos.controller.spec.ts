@@ -13,12 +13,14 @@ import { Produto } from "src/core/produtos/entities/produto.entity";
 import { Item } from "../entities/item.entity";
 import { NaoPodeAlterarPedido, NaoPodeSolicitarPagamento } from "../exceptions/pedido.exception";
 import { SolicitarPagamentoChannel } from "src/externals/channels/solicitar.pagamento.channel";
+import { PrepararPedidoChannel } from "src/externals/channels/preparar.pedido.channel";
 
 describe('PedidosController', () => {
     let repository: PedidosRepositoryInterface;
     let clientesRepository: ClientesRepositoryInterface;
     let controller: PedidosControllerInterface;
     let pagamentosChannel: SolicitarPagamentoChannel;
+    let producaoChannel: PrepararPedidoChannel;
 
     let createItem = (data: object): Item => {
         const item = new Item();
@@ -37,6 +39,7 @@ describe('PedidosController', () => {
                 new PedidoAggregateFactory(clientesRepository = new ClientesRepository(null), repository),
                 repository,
                 pagamentosChannel = new SolicitarPagamentoChannel(null),
+                producaoChannel = new PrepararPedidoChannel(null),
             ),
         )
     });

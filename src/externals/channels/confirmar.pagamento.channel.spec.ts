@@ -15,7 +15,7 @@ describe('ConfirmarPagamentoChannel', () => {
             pubsubService = new PubSubService(new ConfigService({
                 'GCP_PROJECT_ID': 'fake-123',
             })),
-            pedidos = new PedidosService(null, null, null)
+            pedidos = new PedidosService(null, null, null, null)
         )
     });
 
