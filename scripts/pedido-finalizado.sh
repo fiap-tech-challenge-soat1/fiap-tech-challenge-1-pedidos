@@ -2,7 +2,7 @@
 
 PROJECT_ID="pedidos-app"
 TOPIC="concluir-pedido-topic"
-PEDIDO_ID="13"
+PEDIDO_ID=${1}
 
 PAYLOAD=`echo "{\"pedido\": \"${PEDIDO_ID}\"}" | base64`
 

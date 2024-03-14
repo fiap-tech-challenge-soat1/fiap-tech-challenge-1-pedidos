@@ -49,6 +49,6 @@ export class PrepararPedidoChannel {
     ) {}
 
     prepararPedido(pedido: PedidoProducaoDTO) {
-        this.pubSubService.publishMessage("solicitar-pagamento-topic", pedido.toPayload())
+        this.pubSubService.publishMessage("solicitar-preparo-topic", pedido.toPayload())
     }
 }

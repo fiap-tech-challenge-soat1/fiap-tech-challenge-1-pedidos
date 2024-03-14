@@ -31,7 +31,7 @@ describe('PrepararPedidoChannel', () => {
 
         await channel.prepararPedido(pedido);
 
-        expect(usedTopic).toEqual("solicitar-pagamento-topic")
+        expect(usedTopic).toEqual("solicitar-preparo-topic")
         expect(usedPayload).toEqual(pedido.toPayload())
     });
 })

@@ -2,8 +2,9 @@
 
 PROJECT_ID="pedidos-app"
 TOPIC="confirmar-pagamento-topic"
-PEDIDO_ID="13"
-STATUS="SUCESSO"
+PEDIDO_ID=${1}
+STATUS=${2}
+# STATUS="SUCESSO"
 # STATUS="FALHA"
 
 PAYLOAD=`echo "{\"pedido\": \"${PEDIDO_ID}\", \"resultadoPagamento\": \"${STATUS}\"}" | base64`
