@@ -18,12 +18,12 @@ import { PagamentosAPIService, PagamentosService } from 'src/externals/services/
 import { ProducaoServiceInterface } from './services/producao.service.interface';
 import { ProducaoApiService, ProducaoService } from 'src/externals/services/producao.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PedidosFinalizadosAPI } from 'src/externals/apis/pedidos_finalizados.api';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { PedidoPagamentosAPI } from 'src/externals/apis/pedido_pagamentos.api';
 import { PubSubService } from 'src/externals/channels/pubsub.service';
 import { ConfirmarPagamentoChannel } from 'src/externals/channels/confirmar.pagamento.channel';
 import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.pagamento.channel';
+import { FinalizarPedidoChannel } from 'src/externals/channels/finalizar.pedido.channel';
 
 @Module({
   imports: [
@@ -37,7 +37,6 @@ import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.paga
     PedidosAPI,
     PedidoItensAPI,
     PedidoPagamentosAPI,
-    PedidosFinalizadosAPI,
   ],
   providers: [
     PedidoAggregateFactory,
@@ -86,7 +85,8 @@ import { SolicitarPagamentoChannel } from 'src/externals/channels/solicitar.paga
     },
     PubSubService,
     ConfirmarPagamentoChannel,
-    SolicitarPagamentoChannel
+    SolicitarPagamentoChannel,
+    FinalizarPedidoChannel,
   ],
   exports: [PedidosRepository],
 })
