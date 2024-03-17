@@ -187,4 +187,126 @@ describe('PedidosService', () => {
 
         expect(usedId).toEqual(clienteId);
     });
+
+    it('requests payment', async () => {
+        const pedido = new Pedido();
+        const item = new Item();
+        item.id = 234;
+        item.observacao = "Observação";
+        item.pedido = pedido;
+        item.produto = new Produto();
+        item.precoUnitario = 42;
+        item.quantidade = 1;
+        pedido.id = 123;
+        pedido.status = Status.CRIANDO;
+        pedido.statusPagamento = StatusPagamento.PENDENTE;
+        pedido.itens = [new Item()];
+
+        jest.spyOn(factory, 'createFromId').mockImplementation(async () => {
+            const aggregate = new PedidoAggregate(
+                pedido.status,
+                pedido.statusPagamento,
+                null,
+                [new ItemVO(item.quantidade, item.produto, item.observacao, item.precoUnitario, item.id)],
+            );
+
+            aggregate.id = pedido.id;
+
+            return aggregate;
+        });
+
+        jest.spyOn(repository, 'save').mockImplementation(async (entity) => {
+            return entity;
+        });
+
+        let usedId,
+            usedTotalPrice;
+
+        jest.spyOn(paymentRequestChannel, 'solicitarPagamento').mockImplementation(async (id, totalPrice) => {
+            usedId = id;
+            usedTotalPrice = totalPrice;
+        });
+
+        const updated = await service.solicitarPagamento(pedido.id);
+
+        expect(updated.statusPagamento).toBe(StatusPagamento.PROCESSANDO);
+        expect(usedId).toEqual(pedido.id);
+        expect(usedTotalPrice).toEqual(item.precoUnitario);
+    });
+
+    it('confirm payment success', async () => {
+        const pedido = new Pedido();
+        const item = new Item();
+        item.id = 234;
+        item.observacao = "Observação";
+        item.pedido = pedido;
+        item.produto = new Produto();
+        item.precoUnitario = 42;
+        item.quantidade = 1;
+        pedido.id = 123;
+        pedido.status = Status.CRIANDO;
+        pedido.statusPagamento = StatusPagamento.PROCESSANDO;
+        pedido.itens = [new Item()];
+
+        jest.spyOn(factory, 'createFromId').mockImplementation(async () => {
+            const aggregate = new PedidoAggregate(
+                pedido.status,
+                pedido.statusPagamento,
+                null,
+                [new ItemVO(item.quantidade, item.produto, item.observacao, item.precoUnitario, item.id)],
+            );
+
+            aggregate.id = pedido.id;
+
+            return aggregate;
+        });
+
+        jest.spyOn(repository, 'save').mockImplementation(async (entity) => {
+            return entity;
+        });
+
+        jest.spyOn(requestPreparation, 'prepararPedido').mockImplementation(async () => null);
+
+        const updated = await service.confirmarPagamento(pedido.id, true);
+
+        expect(updated.statusPagamento).toBe(StatusPagamento.SUCESSO);
+        expect(updated.status).toBe(Status.EM_PREPARACAO);
+    });
+
+    it('confirm payment failed', async () => {
+        const pedido = new Pedido();
+        const item = new Item();
+        item.id = 234;
+        item.observacao = "Observação";
+        item.pedido = pedido;
+        item.produto = new Produto();
+        item.precoUnitario = 42;
+        item.quantidade = 1;
+        pedido.id = 123;
+        pedido.status = Status.CRIANDO;
+        pedido.statusPagamento = StatusPagamento.PROCESSANDO;
+        pedido.itens = [new Item()];
+
+        jest.spyOn(factory, 'createFromId').mockImplementation(async () => {
+            const aggregate = new PedidoAggregate(
+                pedido.status,
+                pedido.statusPagamento,
+                null,
+                [new ItemVO(item.quantidade, item.produto, item.observacao, item.precoUnitario, item.id)],
+            );
+
+            aggregate.id = pedido.id;
+
+            return aggregate;
+        });
+
+        jest.spyOn(repository, 'save').mockImplementation(async (entity) => {
+            return entity;
+        });
+
+        const updated = await service.confirmarPagamento(pedido.id, false);
+
+        expect(updated.statusPagamento).toBe(StatusPagamento.FALHOU);
+        expect(updated.status).toBe(Status.CRIANDO);
+    });
 });
