@@ -33,7 +33,7 @@ export class ClientesController implements ClientesControllerInterface {
   }
 
   async update(id: number, input: UpdateClienteDto) {
-    await this.clientes.update(id, input);
+    return await this.clientes.update(id, input);
   }
 
   async remove(id: number) {

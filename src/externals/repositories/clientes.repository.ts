@@ -44,7 +44,7 @@ export class ClientesRepository implements ClientesRepositoryInterface {
       return;
     }
 
-    this.save(cliente.desativar());
+    await this.save(cliente.desativar());
   }
 
   async isActive(id: number): Promise<boolean> {
