@@ -36,7 +36,7 @@ export class PubSubService {
 
         subscription.on("message", (message) => {
             const data = message.data.toString()
-            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem recebida no topico ${subscription.name} ${message}`)
+            console.log(`[SERVICO-PEDIDO][TOPIC] - Mensagem recebida no topico ${topicName} ${message}`)
             callback(data)
             message.ack()
         })
