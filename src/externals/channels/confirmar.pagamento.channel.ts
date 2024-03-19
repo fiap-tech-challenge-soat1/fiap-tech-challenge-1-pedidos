@@ -18,7 +18,6 @@ export class ConfirmarPagamentoChannel {
             "confirmar-pagamento-topic",
             "confirmar-pagamento-topic.pedidos-subscription",
             async (message) => {
-              console.log(`[SERVICO-PAGAMENTO][TOPIC] - Mensagem recebida no topico solicitar-pagamento-topic ${message}`)
               const input: ConfirmaPagamentoDoPedidoDto = JSON.parse(message)
               await this.pedidos.confirmarPagamento(
                 input.pedido,
