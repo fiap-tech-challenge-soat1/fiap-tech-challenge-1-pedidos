@@ -37,6 +37,7 @@ export class ProducaoApiService implements ProducaoServiceInterface {
             timeout: 3_000, // 3 seconds
             headers: {
                 Accept: 'application/json',
+                "Content-Type": 'application/json',
             },
           },
         )
