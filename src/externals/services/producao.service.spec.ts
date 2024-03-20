@@ -52,7 +52,7 @@ describe('ProducaoService', () => {
 
         expect(usedUrl).toEqual(serviceUrl)
         expect(usedData).toEqual(pedido.toPayload())
-        expect(usedConfig).toEqual({ timeout: 3_000, headers: { Accept: 'application/json' , "Content-Type": 'application/json'}})
+        expect(usedConfig).toEqual({ timeout: 15_000, headers: { Accept: 'application/json' , "Content-Type": 'application/json'}})
     })
 
     it('requests producao calls external service with failure', async () => {

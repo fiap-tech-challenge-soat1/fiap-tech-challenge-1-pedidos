@@ -34,7 +34,7 @@ export class ProducaoApiService implements ProducaoServiceInterface {
           this.url,
           pedido.toPayload(),
           {
-            timeout: 3_000, // 3 seconds
+            timeout: 15_000, // 3 seconds
             headers: {
                 Accept: 'application/json',
                 "Content-Type": 'application/json',
