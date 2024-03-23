@@ -12,6 +12,8 @@ Para rodar a aplicação por completa localmente, ou sejá, com os 3 serviços, 
 
 Para subir a aplicação é necessário executar os seguintes comandos em ordem, para que suba primeiro os serviços de infraestrutura como bancos de dados e mensageria para posteriormente subir os serviços de aplicação.
 
+Com o arquivo já baixado em sua máquina execute os seguintes comandos em ordem:
+
 Inicia a infraestrutura:
 ```
 docker-compose -f docker-compose-full.yaml up -d pedidos-db producao-db pagamentos-db pubsub
@@ -63,5 +65,5 @@ Arquitetura da aplicação
 
 ## Vídeo de apresentação
 
-Vídeio no youtube https://www.youtube.com/watch?v=qRlpIAO1HNk
+Vídeo no youtube https://www.youtube.com/watch?v=qRlpIAO1HNk
 
