@@ -85,9 +85,6 @@ services:
       SPRING_PROFILES_ACTIVE: 'local'
       SPRING_CLOUD_GCP_PUBSUB_EMULATOR-HOST: pubsub:8085
       SPRING_CLOUD_GCP_FIRESTORE_HOST-PORT: pagamentos-db:8090
-      GOOGLE_APPLICATION_CREDENTIALS: /run/secrets/gcp-credentials
-    secrets:
-      - gcp-credentials
     networks:
       - fiap
     depends_on:
@@ -119,7 +116,3 @@ volumes:
     driver: local
   producao-db-data:
     driver: local
-
-secrets:
-  gcp-credentials:
-    file: /Users/paulomontanger/Downloads/fake-service-account.json
