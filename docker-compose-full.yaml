@@ -1,0 +1,118 @@
+services:
+  pedidos-api:
+    image: pmoon1993/pedido:latest
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 3000:3000
+    environment:
+      PUBSUB_EMULATOR_HOST: pubsub:8085
+      DB_HOST: pedidos-db
+      DB_PORT: 3306
+      DB_DATABASE: pedidos
+      DB_USERNAME: fiap
+      DB_PASSWORD: password
+      PRODUCAO_PROVIDER: 'api'
+      PRODUCAO_API_URL: "http://producao:3000/pedidos"
+      GCP_PROJECT_ID: fiap-tech-challenge-store
+    networks:
+      - fiap
+    depends_on:
+      - pedidos-db
+
+  pedidos-db:
+    image: mysql/mysql-server:8.0
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: 'pedidos'
+      MYSQL_USER: 'fiap'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'db-data:/var/lib/mysql'
+    networks:
+      - fiap
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+
+  producao:
+    image: pmoon1993/fiap-tech-challenge-soat1-producao:latest
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails db:prepare && bundle exec rails s -b '0.0.0.0'"
+    environment:
+      RAILS_ENV: development
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_HOST: producao-db
+      PEDIDOS_API_URL: pedidos-api:3000
+      secret_key_base: 123
+    networks:
+      - fiap
+    depends_on:
+      - producao-db
+    ports:
+      - 3001:3000
+
+  producao-db:
+    image: mysql/mysql-server:8.0
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: 'producao'
+      MYSQL_USER: 'fiap'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'producao-db-data:/var/lib/mysql'
+    networks:
+      - fiap
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-ppassword"]
+      retries: 3
+      timeout: 5s
+
+  pagamentos-api:
+    image: pmoon1993/pagamento:latest
+    ports:
+      - 8089:8089
+    environment:
+      SPRING_PROFILES_ACTIVE: 'local'
+      SPRING_CLOUD_GCP_PUBSUB_EMULATOR-HOST: pubsub:8085
+      SPRING_CLOUD_GCP_FIRESTORE_HOST-PORT: pagamentos-db:8090
+    networks:
+      - fiap
+    depends_on:
+      - pagamentos-db
+
+  pubsub: 
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+    container_name: pubsub
+    command: bash -c "gcloud beta emulators pubsub start --project=fiap-tech-challenge-store --host-port='0.0.0.0:8085'"
+    networks:
+      - fiap
+    ports:
+      - "8085:8085"
+
+  pagamentos-db:
+    image: pmoon1993/firebase-emulator:2.2
+    command: firebase emulators:start --project fiap-tech-challenge-store
+    networks:
+      - fiap
+    ports:
+      - "4000:4000"
+      - "8090:8090" 
+
+networks:
+  fiap:
+
+volumes:
+  db-data:
+    driver: local
+  producao-db-data:
+    driver: local

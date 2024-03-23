@@ -1,173 +1,69 @@
 ## Description
 
-Repositório do tech challenge 1 da FIAP/Alura
+Serviço de pedidos parte do projeto de Tech Challenge da FIAP.
 
+O projeto como um todo engloga outros dois serviços: <br>
+[Produção](https://github.com/fiap-tech-challenge-soat1/fiap-tech-challenge-1-producao) <br>
+[Pagamentos](https://github.com/fiap-tech-challenge-soat1/fiap-tech-challenge-1-pagamentos)
 
-## Construção da aplicação
+## Como rodar a aplicação localmente
 
-As principais tecnologias utilizadas na consutração da aplicação foram:
+Para rodar a aplicação por completa localmente, ou sejá, com os 3 serviços, disponibilizamos um arquivo [docker-compose-full.yaml](docker-compose-full.yaml) com a última versão de cada serviço e toda a infraestrutura necessária.
 
-- Linguagem TypeScript
-- Framework NestJS
-- Banco de dados MySQL
-- Swagger para documentação das APIs
+Para subir a aplicação é necessário executar os seguintes comandos em ordem, para que suba primeiro os serviços de infraestrutura como bancos de dados e mensageria para posteriormente subir os serviços de aplicação.
 
-## Documentação de domínio
+Com o arquivo já baixado em sua máquina execute os seguintes comandos em ordem:
 
-Para documenação dos fluxos criamos um board na ferramenta Miro onde foi desenhado o fluxo de negócio e disponibilizado o dicionário de linguagem ubíqua.
+Inicia a infraestrutura:
+```
+docker-compose -f docker-compose-full.yaml up -d pedidos-db producao-db pagamentos-db pubsub
+````
 
-Link de acesso ao Miro: https://miro.com/app/board/uXjVMCbokg0=/?share_link_id=11757782716
-
-## Inicialização da aplicação
-
-Para iniciar a aplicação foi disponibilizado um aquivo **docker-compose.yml** com as configurações necessárias para execução, incluindo o build da aplição em uma imagem Docker e um container para o banco de dados MySQL.
-
-Para inicializar a aplicação, rode os comandos:
-
-```bash
-cp .env.example .env
-docker compose up
+Inicia os serviços:
+```shell
+docker-compose -f docker-compose-full.yaml up -d
 ```
 
-Quando o container do MySQL subir com sucesso, a aplicação vai automaticamente aplicar as migrações quando subir. Após isso, você pode acessar a API no navegador [http://localhost:3000/api](http://localhost:3000/api).
+Após subir as aplicações é possível acessar a página do Swagger de cada uma delas, onde existem exemplos de requisições e é onde as APIs estão documentadas.
 
-## Documentação das APIs
-
-Para documentação das APIs utilizamos o framework Swagger. Após a inicialização da aplicação o mesmo fica disponível em [http://localhost:3000/api](http://localhost:3000/api), onde é possível realizar requisições para os endpoints através do mesmo.
-
-Na própria página do Swagger é disponibilizado exemplos de requests.
-
-## Recursos REST disponibilizados
-
-- CRUD de clientes
-- CRUD de produtos
-- Criação e gerenciamento de pedidos
-
-### Fluxo de recursos rest para criação de pedido
-
-Os passos para testar a API são os seguintes:
-
-1. Criar produtos
-1. Criar cliente (opcional)
-1. Criar pedido (passar o ID do cliente é opcional)
-1. Adicionar item ao pedido (usando os IDs dos produtos e do pedido que foi criado)
-1. Confirmar pedido (o pagamento será automaticamente realizado)
-
-Após esses passos, o pedido irá pra linha de produção da cozinha. O mesmo estará disponivel no endpoint de pedidos das cozinhas. A etapa em que o pedido está poderá ser atualizada usando o endpoint de atualizar etapa. Ao mudar o status pra "recebido", o pedido não retornará mais no endpoint da linha de produção da cozinha. Nessa etapa, o status do pedido pode ser mudado para os seguintes:
-
-- `RECEBIDO`: O pagamento foi confirmado e está pronto para ser produzido
-- `EM_PREPARACAO`: O pedido está sendo preparado
-- `PRONTO`: O pedido está pronto e o cliente pode busca-lo
-- `FINALIZADO`: O pedido foi entregue ao cliente
-
-Você pode testar a API direto da documentação do Swagger, aqui alguns exemplos usando CURL direto do terminal:
-
-1. Inicialização do pedido sendo opcional informar o id de um cliente pré cadastrado
-
-```bash
-curl -X 'POST' \
-  'http://localhost:3000/pedidos' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "clienteId": null
-}'
+```
+Pedidos: http://localhost:3000/api
+Pagamentos: http://localhost:8089/swagger-ui/index.html#/
+Producao: http://localhost:3001/api-docs/index.html
 ```
 
-2. Adição de itens no pedido
+**Detalhes do arquivo docker-compose-full.yaml**
 
-```bash
-curl -X 'POST' \
-  'http://localhost:3000/pedidos/2/itens' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "produtoId": 1,
-  "quantidade": 1,
-  "observacao": "Sem picles"
-}'
-```
+Para o nosso sistema utilizamos o Firestore como banco de dados de documentos para o serviço de pagamentos e o Pubsub como serviço de mensageria para a SAGA, sendo que ambos são serviços gerenciados pelo GCP, dessa forma para testar localmente utilizamos imagens docker de emuladores desses serviços.
 
-3. Atualização de itens já inseridos no pedido caso necessário
+## Justificativa padrão saga escolhido
 
-```bash
-curl -X 'PATCH' \
-  'http://localhost:3000/pedidos/2/itens/1' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "quantidade": 5,
-  "observacao": "Com bastante picles"
-}'
-```
+Para a implementação do padrão SAGA escolhemos o modo coreografado, pelo fato da aplicação ser pequena e o número de transações não ser grande conseguimos entender perfeiatamente o fluxo sem a necessidade de um centralizador. 
 
-4. Remoção de itens já inseridos no pedido caso necessário
+Porém entendemos que no futuro conforme o número de transações forem aumentando podemos migrar para o modelo orquestrado para ter um controle mais centralizado das operações de uma SAGA.
 
-```bash
-curl -X 'DELETE' \
-  'http://localhost:3000/pedidos/2/itens/1' \
-  -H 'accept: */*'
-```
+## Relatórios OWASP ZAP
 
-5. Confirmação de pagamento do pedido
+Ao rodar o ZAP nos endpoints escolhidos não foi identificado nenhuma vulnerabilidade alta, dessa forma foi não necessário gerar um relatório do antes e um do depois.
 
-```bash
-curl -X 'POST' \
-  'http://localhost:3000/pedidos/2/confirm' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{}'
-```
+Para a nossa aplicação o processo de checkout e geração de pagamento é o mesmo, sendo esse o endpoint que inicia a SAGA do fluxo de pagamento.
 
-6. Inicio da prepração do pedido
+Link [ZAP-report-cardapio-checkoutPagamento.pdf](ZAP-report-cardapio-checkoutPagamento.pdf)<br>
+Link [ZAP-report-webhook.pdf](ZAP-report-webhook.pdf)
 
-```bash
-curl -X 'PUT' \
-  'http://localhost:3000/cozinha/pedidos/2/status' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "status": "EM_PREPARACAO"
-}'
-```
 
-6. Conclusão da preparação do pedido
+## Relatório RIPD
 
-```bash
-curl -X 'PUT' \
-  'http://localhost:3000/cozinha/pedidos/2/status' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "status": "PRONTO"
-}'
-```
+Link [Relatorio-RIPD.pdf](Relatorio-RIPD.pdf)
 
-7. Finalização do pedido
 
-```bash
-curl -X 'PUT' \
-  'http://localhost:3000/cozinha/pedidos/2/status' \
-  -H 'accept: */*' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "status": "FINALIZADO"
-}'
-```
+## Desenho da arquitetura
 
-## Deployment no Kubernetes
+Arquitetura da aplicação
 
-Nossos templates para deployment no K8s estão na pasta [`k8s/`](./k8s/). Para fazer o deploy da aplicação basta apenas executar:
+![](desenho-arquitetura.png)
 
-```bash
-kubectl apply -f k8s/
-```
+## Vídeo de apresentação
 
-Após isso, a aplicação irá inicializar. Estamos contando que o deployment será feito no Minikube. Para testar a aplicação no browser, é só pegar o IP da VM do Minikube e abrir na porta `30001` no navegador:
+Vídeo no youtube https://www.youtube.com/watch?v=qRlpIAO1HNk
 
-```bash
-minikube ip
-192.168.49.2 #  exemplo
-```
-
-Nesse exemplo, é só acessar: http://192.168.49.2:30001, mas o seu IP pode ser diferente.
